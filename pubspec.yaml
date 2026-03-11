@@ -33,6 +33,15 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   build_runner: ^2.4.15
   json_serializable: ^6.9.4
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/img_app_icon.png"
+  adaptive_icon_background: "#0E0E11"
+  adaptive_icon_foreground: "assets/images/img_app_icon.png"
+  remove_alpha_ios: true
 
 flutter:
 
@@ -55,9 +64,4 @@ flutter:
           weight: 700
     - family: Bounded
       fonts:
-        - asset: assets/fonts/Bounded-ExtraLight.ttf
-          weight: 200
-        - asset: assets/fonts/Bounded-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/Bounded-Black.ttf
-          weight: 900
+        - asset: assets/fonts/Bounded-Variable.ttf

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../cubit/account_cubit.dart';
@@ -40,7 +39,7 @@ class _AccountView extends StatelessWidget {
                     ),
                     const SizedBox(width: 12),
                     const Text(
-                      'Аккаунт',
+                      'Account',
                       style: TextStyle(
                         color: AppColors.textPrimary,
                         fontSize: 24,
@@ -49,89 +48,63 @@ class _AccountView extends StatelessWidget {
                     ),
                     const Spacer(),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.read<AccountCubit>().clearProfile();
+                      },
                       child: const Text(
-                        'Выйти',
+                        'Logout',
                         style: TextStyle(color: AppColors.gradientStart),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
-                // Subscription card
                 if (state is AccountLoaded) ...[
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF8B1A1A), Color(0xFF2D0A0A)],
-                      ),
+                      color: AppColors.surface,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Text(
-                              state.user.subscriptionPlan,
-                              style: const TextStyle(
-                                color: AppColors.textPrimary,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const Spacer(),
-                            if (state.user.subscriptionExpiresAt != null)
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  'До ${DateFormat('dd.MM.yyyy').format(state.user.subscriptionExpiresAt!)}',
-                                  style: const TextStyle(
-                                    color: AppColors.textPrimary,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                          ],
+                        Text(
+                          state.user.login,
+                          style: const TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          'Текущий тариф. Телевидение в качестве Full HD, фильмы, каналы и трансляции в лучшем разрешении',
-                          style: TextStyle(
+                        Text(
+                          state.user.email,
+                          style: const TextStyle(
                             color: AppColors.textSecondary,
-                            fontSize: 13,
+                            fontSize: 14,
                           ),
                         ),
                       ],
                     ),
                   ),
                 ],
+                if (state is AccountEmpty)
+                  const Center(
+                    child: Text(
+                      'Please log in to see your profile.',
+                      style: TextStyle(color: AppColors.textSecondary),
+                    ),
+                  ),
                 const SizedBox(height: 24),
-                // Menu items
-                _buildMenuItem(
-                  icon: Icons.subscriptions_outlined,
-                  title: 'Все подписки',
-                  subtitle: 'Список всех тарифов',
-                  onTap: () {},
-                ),
-                _buildMenuItem(
-                  icon: Icons.shopping_bag_outlined,
-                  title: 'Покупки',
-                  onTap: () {},
-                ),
                 _buildMenuItem(
                   icon: Icons.settings_outlined,
-                  title: 'Настройки',
+                  title: 'Settings',
                   onTap: () {},
                 ),
                 _buildMenuItem(
                   icon: Icons.help_outline,
-                  title: 'Помощь',
+                  title: 'Help',
                   onTap: () {},
                 ),
                 const SizedBox(height: 24),
@@ -139,7 +112,7 @@ class _AccountView extends StatelessWidget {
                   onPressed: () {},
                   icon: const Icon(Icons.devices, color: AppColors.gradientStart),
                   label: const Text(
-                    'Подключить устройство',
+                    'Connect device',
                     style: TextStyle(color: AppColors.gradientStart),
                   ),
                 ),

@@ -59,7 +59,7 @@ class AppButton extends StatelessWidget {
       onTap: onPressed,
       child: Container(
         width: width,
-        height: 44,
+        height: 48,
         decoration: BoxDecoration(
           gradient: AppColors.primaryGradient,
           borderRadius: BorderRadius.circular(8),
@@ -83,7 +83,7 @@ class AppButton extends StatelessWidget {
   Widget _buildDisabled() {
     return Container(
       width: width,
-      height: 44,
+      height: 48,
       decoration: BoxDecoration(
         color: AppColors.disabled,
         borderRadius: BorderRadius.circular(8),

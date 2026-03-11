@@ -1,40 +1,28 @@
+/// Simplified program model. The API does not have a separate programs endpoint.
+/// Current program info comes embedded in the channel response.
+/// This model is kept for potential future use with archive data.
 class ProgramModel {
-  final String id;
+  final int? id;
   final String title;
   final String? description;
-  final DateTime startTime;
-  final DateTime endTime;
-  final bool isLive;
-  final int? season;
-  final int? episode;
+  final String? startTime;
+  final String? endTime;
 
   const ProgramModel({
-    required this.id,
+    this.id,
     required this.title,
     this.description,
-    required this.startTime,
-    required this.endTime,
-    this.isLive = false,
-    this.season,
-    this.episode,
+    this.startTime,
+    this.endTime,
   });
 
   factory ProgramModel.fromJson(Map<String, dynamic> json) {
     return ProgramModel(
-      id: json['id'] as String,
+      id: json['id'] as int?,
       title: json['title'] as String,
       description: json['description'] as String?,
-      startTime: DateTime.parse(json['start_time'] as String),
-      endTime: DateTime.parse(json['end_time'] as String),
-      isLive: json['is_live'] as bool? ?? false,
-      season: json['season'] as int?,
-      episode: json['episode'] as int?,
+      startTime: json['start_time'] as String?,
+      endTime: json['end_time'] as String?,
     );
-  }
-
-  String get timeRange {
-    final start = '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}';
-    final end = '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}';
-    return '$start - $end';
   }
 }

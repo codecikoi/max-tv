@@ -21,6 +21,7 @@ class AppColors {
   static const iconInactive = bw4;
   static const chevron = bw6;
   static const disabled = bw4;
+  static const scaffoldBackground = Color(0xFF0E0E11);
   static const divider = Color(0xFF2C2C2E);
 
   // Gradient
@@ -33,6 +34,10 @@ class AppColors {
     end: Alignment.centerRight,
     colors: [gradientStart, gradientEnd],
   );
+
+  // Status
+  static const error = Color(0xFFA52921);
+  static const success = Color(0xFF19724E);
 
   // LIVE badge
   static const live = Color(0xFFFF3B30);

@@ -7,25 +7,47 @@ class ChannelsCubit extends Cubit<ChannelsState> {
 
   ChannelsCubit(this._repository) : super(ChannelsInitial());
 
-  Future<void> loadChannels() async {
+  Future<void> loadChannels({int page = 1}) async {
     emit(ChannelsLoading());
     try {
-      final channels = await _repository.getChannels();
-      emit(ChannelsLoaded(channels: channels));
+      final result = await _repository.getChannels(page: page);
+      emit(ChannelsLoaded(channels: result.data, meta: result.meta));
     } catch (e) {
       emit(ChannelsError(e.toString()));
     }
   }
 
-  Future<void> searchChannels(String query) async {
+  Future<void> searchChannels(String query, {int page = 1}) async {
     emit(ChannelsLoading());
     try {
-      final channels = query.isEmpty
-          ? await _repository.getChannels()
-          : await _repository.searchChannels(query);
-      emit(ChannelsLoaded(channels: channels, searchQuery: query));
+      final result = await _repository.getChannels(page: page, search: query.isEmpty ? null : query);
+      emit(ChannelsLoaded(
+        channels: result.data,
+        meta: result.meta,
+        searchQuery: query,
+      ));
     } catch (e) {
       emit(ChannelsError(e.toString()));
+    }
+  }
+
+  Future<void> loadNextPage() async {
+    final currentState = state;
+    if (currentState is ChannelsLoaded && currentState.meta.hasNextPage) {
+      try {
+        final nextPage = currentState.meta.currentPage + 1;
+        final result = await _repository.getChannels(
+          page: nextPage,
+          search: currentState.searchQuery.isEmpty ? null : currentState.searchQuery,
+        );
+        emit(ChannelsLoaded(
+          channels: [...currentState.channels, ...result.data],
+          meta: result.meta,
+          searchQuery: currentState.searchQuery,
+        ));
+      } catch (e) {
+        emit(ChannelsError(e.toString()));
+      }
     }
   }
 }

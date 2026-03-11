@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../data/models/program_model.dart';
+import '../../../channels/data/models/channel_model.dart';
 
+/// Displays the current program info from a channel.
 class ProgramTile extends StatelessWidget {
-  final ProgramModel program;
+  final CurrentProgram program;
 
   const ProgramTile({super.key, required this.program});
 
@@ -14,66 +15,23 @@ class ProgramTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Text(
-                program.timeRange,
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              if (program.isLive) ...[
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: AppColors.live,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Text(
-                    'LIVE',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            program.title,
-            style: TextStyle(
-              color: program.isLive ? AppColors.textPrimary : AppColors.textSecondary,
-              fontSize: 14,
-              fontWeight: program.isLive ? FontWeight.w600 : FontWeight.normal,
-            ),
-          ),
-          if (program.season != null || program.episode != null)
+          if (program.startTime != null)
             Text(
-              [
-                if (program.season != null) 'Сезон ${program.season}',
-                if (program.episode != null) 'Эпизод ${program.episode}',
-              ].join(', '),
+              '${program.startTime} - ${program.endTime ?? ''}',
               style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 12,
+                color: AppColors.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
               ),
             ),
-          if (program.description != null) ...[
+          if (program.title != null) ...[
             const SizedBox(height: 4),
             Text(
-              program.description!,
+              program.title!,
               style: const TextStyle(
                 color: AppColors.textSecondary,
-                fontSize: 13,
+                fontSize: 14,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
           ],
         ],

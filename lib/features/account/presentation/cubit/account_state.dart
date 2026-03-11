@@ -21,6 +21,8 @@ class AccountLoaded extends AccountState {
   List<Object?> get props => [user];
 }
 
+class AccountEmpty extends AccountState {}
+
 class AccountError extends AccountState {
   final String message;
 

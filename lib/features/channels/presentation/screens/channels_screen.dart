@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_icons.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/app_loader.dart';
 import '../cubit/channels_cubit.dart';
 import '../cubit/channels_state.dart';
 import '../widgets/channel_card.dart';
@@ -28,20 +31,34 @@ class _ChannelsView extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
-              child: TextField(
-                onChanged: (query) {
-                  context.read<ChannelsCubit>().searchChannels(query);
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: GestureDetector(
+                onTap: () {
+                  // TODO: open search
                 },
-                decoration: InputDecoration(
-                  hintText: 'Поиск канала',
-                  hintStyle: const TextStyle(color: AppColors.textSecondary),
-                  prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
-                  filled: true,
-                  fillColor: AppColors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
+                child: Container(
+                  height: 40,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceLight,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    children: [
+                      AppIcons.svg(
+                        'ic_search',
+                        width: 24,
+                        height: 24,
+                        color: AppColors.iconInactive,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Поиск канала',
+                        style: AppTextStyles.bodyRegular.copyWith(
+                          color: AppColors.iconInactive,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -50,23 +67,43 @@ class _ChannelsView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
-                  const Text(
-                    'Все телеканалы',
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  Text('Все телеканалы', style: AppTextStyles.caption),
                   const Spacer(),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.grid_view, color: AppColors.textSecondary),
-                  ),
-                  TextButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.filter_list, size: 18),
-                    label: const Text('Фильтр'),
+                  GestureDetector(
+                    onTap: () {
+                      // TODO: filter
+                    },
+                    child: Container(
+                      height: 36,
+                      padding: const EdgeInsets.only(
+                        left: 12,
+                        right: 16,
+                        top: 6,
+                        bottom: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceLight,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AppIcons.svg(
+                            'ic_sort',
+                            width: 24,
+                            height: 24,
+                            color: AppColors.textPrimary,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Фильтр',
+                            style: AppTextStyles.fieldLabel.copyWith(
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -75,7 +112,7 @@ class _ChannelsView extends StatelessWidget {
               child: BlocBuilder<ChannelsCubit, ChannelsState>(
                 builder: (context, state) {
                   if (state is ChannelsLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(child: AppLoader());
                   }
                   if (state is ChannelsError) {
                     return Center(child: Text(state.message));

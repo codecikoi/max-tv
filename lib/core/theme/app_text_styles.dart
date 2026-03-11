@@ -34,13 +34,21 @@ class AppTextStyles {
     color: AppColors.bw9999,
   );
 
-  // Placeholder style
+  static const inputText = TextStyle(
+    fontFamily: _inter,
+    fontWeight: FontWeight.w400,
+    fontSize: 18,
+    height: 24 / 18,
+    letterSpacing: -0.18,
+    color: AppColors.bw9999,
+  );
+
   static const placeholder = TextStyle(
     fontFamily: _inter,
     fontWeight: FontWeight.w400,
-    fontSize: 14,
-    height: 18 / 14,
-    letterSpacing: -0.14,
+    fontSize: 18,
+    height: 24 / 18,
+    letterSpacing: -0.18,
     color: AppColors.bw4,
   );
 
@@ -50,6 +58,14 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     fontSize: 10,
     height: 12 / 10,
+  );
+
+  static final titleBounded = TextStyle(
+    fontFamily: _bounded,
+    fontVariations: const [FontVariation('wght', 700)],
+    fontSize: 20,
+    height: 26 / 20,
+    color: AppColors.bw9999,
   );
 
   // Title large — onboarding, screen headers
@@ -79,7 +95,22 @@ class AppTextStyles {
     color: AppColors.textSecondary,
   );
 
-  // Caption small
+  static final h3Mob = TextStyle(
+    fontFamily: _bounded,
+    fontVariations: const [FontVariation('wght', 566)],
+    fontSize: 16,
+    height: 24 / 16,
+    color: AppColors.bw9999,
+  );
+
+  static const fieldLabel = TextStyle(
+    fontFamily: _inter,
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+    height: 18 / 14,
+    color: AppColors.bw9999,
+  );
+
   static const captionSmall = TextStyle(
     fontFamily: _inter,
     fontWeight: FontWeight.w400,

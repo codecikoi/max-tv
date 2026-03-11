@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 
@@ -28,12 +29,14 @@ class AppTabBar extends StatelessWidget {
           children: [
             _buildTab(
               index: 0,
-              icon: Icons.live_tv,
+              selectedIcon: 'ic_tv_selected',
+              unselectedIcon: 'ic_tv_unselected',
               label: 'Просмотр ТВ',
             ),
             _buildTab(
               index: 1,
-              icon: Icons.person,
+              selectedIcon: 'ic_profile_selected',
+              unselectedIcon: 'ic_profile_unselected',
               label: 'Профиль',
             ),
           ],
@@ -44,7 +47,8 @@ class AppTabBar extends StatelessWidget {
 
   Widget _buildTab({
     required int index,
-    required IconData icon,
+    required String selectedIcon,
+    required String unselectedIcon,
     required String label,
   }) {
     final isSelected = currentIndex == index;
@@ -63,36 +67,40 @@ class AppTabBar extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ShaderMask(
-                shaderCallback: (bounds) {
-                  if (isSelected) {
-                    return AppColors.primaryGradient.createShader(bounds);
-                  }
-                  return const LinearGradient(
-                    colors: [AppColors.iconInactive, AppColors.iconInactive],
-                  ).createShader(bounds);
-                },
-                child: Icon(
-                  icon,
-                  size: 24,
-                  color: Colors.white,
+              if (isSelected)
+                ShaderMask(
+                  shaderCallback: (bounds) =>
+                      AppColors.primaryGradient.createShader(bounds),
+                  blendMode: BlendMode.srcIn,
+                  child: SvgPicture.asset(
+                    'assets/icons/$selectedIcon.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                )
+              else
+                SvgPicture.asset(
+                  'assets/icons/$unselectedIcon.svg',
+                  width: 24,
+                  height: 24,
+                  colorFilter: const ColorFilter.mode(
+                    AppColors.iconInactive,
+                    BlendMode.srcIn,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              ShaderMask(
-                shaderCallback: (bounds) {
-                  if (isSelected) {
-                    return AppColors.primaryGradient.createShader(bounds);
-                  }
-                  return const LinearGradient(
-                    colors: [AppColors.iconInactive, AppColors.iconInactive],
-                  ).createShader(bounds);
-                },
-                child: Text(
-                  label,
-                  style: AppTextStyles.tabLabel.copyWith(color: Colors.white),
+              if (isSelected) ...[
+                const SizedBox(height: 4),
+                ShaderMask(
+                  shaderCallback: (bounds) =>
+                      AppColors.primaryGradient.createShader(bounds),
+                  blendMode: BlendMode.srcIn,
+                  child: Text(
+                    label,
+                    style:
+                        AppTextStyles.tabLabel.copyWith(color: Colors.white),
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

@@ -1,4 +1,4 @@
 class AppConstants {
-  static const baseUrl = 'https://api.maxtv.app/v1';
-  static const channelsPerPage = 20;
+  static const baseUrl = 'https://maxtv-api.terexov-tech.ru/api';
+  static const channelsPerPage = 15;
 }

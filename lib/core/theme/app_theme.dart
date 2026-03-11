@@ -19,15 +19,9 @@ class AppTheme {
         titleTextStyle: AppTextStyles.caption,
         iconTheme: IconThemeData(color: AppColors.chevron),
       ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: AppColors.surfaceLight,
-        hintStyle: AppTextStyles.placeholder,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
+      inputDecorationTheme: const InputDecorationTheme(
+        border: InputBorder.none,
+        isDense: true,
       ),
       cardTheme: const CardThemeData(
         color: AppColors.surfaceLight,
