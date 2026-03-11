@@ -3,8 +3,6 @@ import '../../../channels/data/repositories/channels_repository.dart';
 import '../../data/repositories/epg_repository.dart';
 import 'epg_state.dart';
 
-/// EPG cubit now loads channel detail (which includes current program info)
-/// since the API has no separate EPG listing endpoint.
 class EpgCubit extends Cubit<EpgState> {
   final ChannelsRepository _channelsRepository;
   final EpgRepository _epgRepository;

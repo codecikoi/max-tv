@@ -1,6 +1,3 @@
-/// Simplified program model. The API does not have a separate programs endpoint.
-/// Current program info comes embedded in the channel response.
-/// This model is kept for potential future use with archive data.
 class ProgramModel {
   final int? id;
   final String title;

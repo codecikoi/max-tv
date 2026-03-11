@@ -28,6 +28,8 @@ class ChannelsLoaded extends ChannelsState {
   List<Object?> get props => [channels, meta, searchQuery];
 }
 
+class ChannelsTariffExpired extends ChannelsState {}
+
 class ChannelsError extends ChannelsState {
   final String message;
 

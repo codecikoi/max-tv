@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/channels_repository.dart';
 import 'channels_state.dart';
@@ -13,7 +14,7 @@ class ChannelsCubit extends Cubit<ChannelsState> {
       final result = await _repository.getChannels(page: page);
       emit(ChannelsLoaded(channels: result.data, meta: result.meta));
     } catch (e) {
-      emit(ChannelsError(e.toString()));
+      _handleError(e);
     }
   }
 
@@ -27,7 +28,7 @@ class ChannelsCubit extends Cubit<ChannelsState> {
         searchQuery: query,
       ));
     } catch (e) {
-      emit(ChannelsError(e.toString()));
+      _handleError(e);
     }
   }
 
@@ -46,8 +47,16 @@ class ChannelsCubit extends Cubit<ChannelsState> {
           searchQuery: currentState.searchQuery,
         ));
       } catch (e) {
-        emit(ChannelsError(e.toString()));
+        _handleError(e);
       }
+    }
+  }
+
+  void _handleError(Object e) {
+    if (e is DioException && e.response?.statusCode == 402) {
+      emit(ChannelsTariffExpired());
+    } else {
+      emit(ChannelsError(e is DioException ? (e.message ?? e.toString()) : e.toString()));
     }
   }
 }

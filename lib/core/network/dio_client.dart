@@ -37,8 +37,6 @@ class DioClient {
 
 class _AuthInterceptor extends Interceptor {
   final TokenStorage _tokenStorage;
-
-  /// Paths that do not require a Bearer token.
   static const _publicPaths = [
     '/login',
     '/register/email',
@@ -81,6 +79,9 @@ class _ErrorInterceptor extends Interceptor {
           break;
         case 401:
           message = 'Неверный логин или пароль.';
+          break;
+        case 402:
+          message = 'Тариф просрочен.';
           break;
         case 403:
           message = 'Доступ запрещён.';

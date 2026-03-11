@@ -1,6 +1,5 @@
 import '../../../account/data/models/user_model.dart';
 
-/// Response for /register/email and /register/resend.
 class RegisterEmailResponse {
   final bool success;
   final String message;
@@ -21,7 +20,6 @@ class RegisterEmailResponse {
   }
 }
 
-/// Response for /register/confirm.
 class RegisterConfirmResponse {
   final bool success;
   final String message;
@@ -42,7 +40,6 @@ class RegisterConfirmResponse {
   }
 }
 
-/// Response for /register/complete.
 class RegisterCompleteResponse {
   final String accessToken;
   final String refreshToken;

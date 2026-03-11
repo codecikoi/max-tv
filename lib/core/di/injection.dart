@@ -23,14 +23,12 @@ import '../../features/device_auth/data/datasources/device_auth_remote_datasourc
 final getIt = GetIt.instance;
 
 void configureDependencies() {
-  // Core
   getIt.registerLazySingleton<Talker>(() => Talker());
   getIt.registerLazySingleton<TokenStorage>(() => TokenStorage());
   getIt.registerLazySingleton<DioClient>(
     () => DioClient(getIt<TokenStorage>(), getIt<Talker>()),
   );
 
-  // Auth
   getIt.registerLazySingleton<AuthRemoteDatasource>(
     () => AuthRemoteDatasource(getIt<DioClient>()),
   );
@@ -41,7 +39,6 @@ void configureDependencies() {
     () => AuthCubit(getIt<AuthRepository>()),
   );
 
-  // Channels
   getIt.registerLazySingleton<ChannelsRemoteDatasource>(
     () => ChannelsRemoteDatasource(getIt<DioClient>()),
   );
@@ -52,7 +49,6 @@ void configureDependencies() {
     () => ChannelsCubit(getIt<ChannelsRepository>()),
   );
 
-  // Favorites
   getIt.registerLazySingleton<FavoritesRemoteDatasource>(
     () => FavoritesRemoteDatasource(getIt<DioClient>()),
   );
@@ -63,7 +59,6 @@ void configureDependencies() {
     () => FavoritesCubit(getIt<FavoritesRepository>()),
   );
 
-  // EPG
   getIt.registerLazySingleton<EpgRemoteDatasource>(
     () => EpgRemoteDatasource(getIt<DioClient>()),
   );
@@ -74,7 +69,6 @@ void configureDependencies() {
     () => EpgCubit(getIt<ChannelsRepository>(), getIt<EpgRepository>()),
   );
 
-  // Account
   getIt.registerLazySingleton<AccountRepository>(
     () => AccountRepository(getIt<DioClient>()),
   );
@@ -82,7 +76,6 @@ void configureDependencies() {
     () => AccountCubit(getIt<AccountRepository>()),
   );
 
-  // Blog
   getIt.registerLazySingleton<BlogRemoteDatasource>(
     () => BlogRemoteDatasource(getIt<DioClient>()),
   );
@@ -90,7 +83,6 @@ void configureDependencies() {
     () => BlogRepository(getIt<BlogRemoteDatasource>()),
   );
 
-  // Device Auth
   getIt.registerLazySingleton<DeviceAuthRemoteDatasource>(
     () => DeviceAuthRemoteDatasource(getIt<DioClient>()),
   );

@@ -48,7 +48,6 @@ class _EpgView extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                // Channel header
                 Row(
                   children: [
                     ClipRRect(

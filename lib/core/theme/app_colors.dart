@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // BW Palette (from UI kit)
   static const bw0 = Color(0xFF19191A);
   static const bw1 = Color(0xFF121113);
   static const bw2 = Color(0xFF252527);
@@ -11,7 +10,6 @@ class AppColors {
   static const bw5 = Color(0xFFFFFFFF);
   static const bw9999 = Color(0xFFFFFFFF);
 
-  // Semantic aliases
   static const background = bw0;
   static const surface = bw3;
   static const surfaceLight = bw2;
@@ -24,7 +22,6 @@ class AppColors {
   static const scaffoldBackground = Color(0xFF0E0E11);
   static const divider = Color(0xFF2C2C2E);
 
-  // Gradient
   static const gradientStart = Color(0xFFFE5C96);
   static const gradientEnd = Color(0xFFFB5D48);
   static const hovered = Color(0xFFFD5D6B);
@@ -35,10 +32,8 @@ class AppColors {
     colors: [gradientStart, gradientEnd],
   );
 
-  // Status
   static const error = Color(0xFFA52921);
   static const success = Color(0xFF19724E);
 
-  // LIVE badge
   static const live = Color(0xFFFF3B30);
 }

@@ -43,7 +43,6 @@ class _AccountView extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                // Header
                 Row(
                   children: [
                     Container(

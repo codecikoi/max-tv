@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../channels/data/models/channel_model.dart';
 
-/// Displays the current program info from a channel.
 class ProgramTile extends StatelessWidget {
   final CurrentProgram program;
 

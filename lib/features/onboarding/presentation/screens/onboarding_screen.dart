@@ -55,7 +55,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Placeholder for illustration
                     Container(
                       height: 400,
                       decoration: BoxDecoration(
@@ -89,14 +88,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               );
             },
           ),
-          // Bottom section
           Positioned(
             bottom: 60,
             left: 24,
             right: 24,
             child: Column(
               children: [
-                // Page indicators
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(_pages.length, (index) {

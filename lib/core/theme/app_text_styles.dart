@@ -5,7 +5,6 @@ class AppTextStyles {
   static const _inter = 'Inter';
   static const _bounded = 'Bounded';
 
-  // Text L/1440 — button text
   static const buttonText = TextStyle(
     fontFamily: _inter,
     fontWeight: FontWeight.w500,
@@ -15,7 +14,6 @@ class AppTextStyles {
     color: AppColors.bw9999,
   );
 
-  // Caption/1920 — header, labels
   static const caption = TextStyle(
     fontFamily: _inter,
     fontWeight: FontWeight.w500,
@@ -24,7 +22,6 @@ class AppTextStyles {
     color: AppColors.bw9999,
   );
 
-  // Text Regular/Mob — body, search placeholder
   static const bodyRegular = TextStyle(
     fontFamily: _inter,
     fontWeight: FontWeight.w400,
@@ -52,7 +49,6 @@ class AppTextStyles {
     color: AppColors.bw4,
   );
 
-  // Tab bar label (Bounded font)
   static const tabLabel = TextStyle(
     fontFamily: _bounded,
     fontWeight: FontWeight.w400,
@@ -68,7 +64,6 @@ class AppTextStyles {
     color: AppColors.bw9999,
   );
 
-  // Title large — onboarding, screen headers
   static const titleLarge = TextStyle(
     fontFamily: _inter,
     fontWeight: FontWeight.w700,
@@ -77,7 +72,6 @@ class AppTextStyles {
     color: AppColors.bw9999,
   );
 
-  // Title medium
   static const titleMedium = TextStyle(
     fontFamily: _inter,
     fontWeight: FontWeight.w600,
@@ -86,7 +80,6 @@ class AppTextStyles {
     color: AppColors.bw9999,
   );
 
-  // Body small
   static const bodySmall = TextStyle(
     fontFamily: _inter,
     fontWeight: FontWeight.w400,

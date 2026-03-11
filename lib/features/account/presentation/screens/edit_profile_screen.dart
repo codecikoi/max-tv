@@ -97,8 +97,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         login: widget.user.login,
       );
       if (mounted) context.pop(true);
-    } catch (_) {
-      // Ошибка уже залогирована в Talker
-    }
+    } catch (_) {}
   }
 }
