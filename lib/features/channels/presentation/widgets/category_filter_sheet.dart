@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/app_loader.dart';
 import '../../data/models/category_model.dart';
 import '../../data/repositories/channels_repository.dart';
 import '../../data/repositories/favorites_repository.dart';
@@ -162,38 +162,9 @@ class _CategoryFilterSheetBodyState extends State<_CategoryFilterSheetBody> {
   }
 
   Widget _buildSkeletonList() {
-    return Skeletonizer(
-      enabled: true,
-      effect: ShimmerEffect(
-        baseColor: AppColors.surfaceLight,
-        highlightColor: AppColors.surfaceLight.withValues(alpha: 0.5),
-      ),
-      child: Column(
-        children: List.generate(6, (_) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 2),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(
-                children: [
-                  Bone.square(size: 18, uniRadius: 3),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Bone.text(
-                      words: 2,
-                      style: const TextStyle(fontSize: 16, height: 20 / 16),
-                    ),
-                  ),
-                  Bone.text(
-                    words: 1,
-                    style: const TextStyle(fontSize: 12, height: 20 / 12),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
-      ),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 40),
+      child: Center(child: AppLoader()),
     );
   }
 
