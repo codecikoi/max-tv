@@ -1,4 +1,4 @@
-import 'user_model.dart';
+import '../../../account/data/models/user_model.dart';
 
 /// Response for /register/email and /register/resend.
 class RegisterEmailResponse {
@@ -44,27 +44,29 @@ class RegisterConfirmResponse {
 
 /// Response for /register/complete.
 class RegisterCompleteResponse {
-  final bool success;
-  final String message;
   final String accessToken;
+  final String refreshToken;
   final String tokenType;
-  final UserModel user;
+  final int expiresIn;
+  final UserModel? user;
 
   const RegisterCompleteResponse({
-    required this.success,
-    required this.message,
     required this.accessToken,
+    required this.refreshToken,
     required this.tokenType,
-    required this.user,
+    required this.expiresIn,
+    this.user,
   });
 
   factory RegisterCompleteResponse.fromJson(Map<String, dynamic> json) {
     return RegisterCompleteResponse(
-      success: json['success'] as bool? ?? true,
-      message: json['message'] as String? ?? '',
       accessToken: json['access_token'] as String? ?? '',
+      refreshToken: json['refresh_token'] as String? ?? '',
       tokenType: json['token_type'] as String? ?? 'Bearer',
-      user: UserModel.fromJson(json['user'] as Map<String, dynamic>),
+      expiresIn: json['expires_in'] as int? ?? 0,
+      user: json['user'] != null
+          ? UserModel.fromJson(json['user'] as Map<String, dynamic>)
+          : null,
     );
   }
 }

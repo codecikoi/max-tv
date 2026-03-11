@@ -50,13 +50,6 @@ class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
               '/register/confirm',
               extra: _emailController.text.trim(),
             );
-          } else if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.live,
-              ),
-            );
           }
         },
         child: Scaffold(
@@ -70,11 +63,24 @@ class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
                   const SizedBox(height: 24),
                   Text('Создайте аккаунт', style: AppTextStyles.h3Mob),
                   const SizedBox(height: 32),
-                  AppTextField(
-                    controller: _emailController,
-                    label: 'Почта',
-                    hint: 'Введите e-mail',
-                    keyboardType: TextInputType.emailAddress,
+                  BlocBuilder<AuthCubit, AuthState>(
+                    buildWhen: (prev, curr) =>
+                        curr is AuthError || curr is AuthInitial || curr is AuthLoading || curr is AuthCodeSent,
+                    builder: (context, state) {
+                      final errorText = state is AuthError ? state.message : null;
+                      return AppTextField(
+                        controller: _emailController,
+                        label: 'Почта',
+                        hint: 'Введите e-mail',
+                        keyboardType: TextInputType.emailAddress,
+                        errorText: errorText,
+                        onChanged: (_) {
+                          if (state is AuthError) {
+                            _cubit.resetState();
+                          }
+                        },
+                      );
+                    },
                   ),
                   const Spacer(),
                   BlocBuilder<AuthCubit, AuthState>(

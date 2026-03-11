@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_icons.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/app_loader.dart';
 import '../cubit/account_cubit.dart';
 import '../cubit/account_state.dart';
 
@@ -10,8 +15,8 @@ class AccountScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<AccountCubit>()..loadProfile(),
+    return BlocProvider.value(
+      value: getIt<AccountCubit>()..loadProfile(),
       child: const _AccountView(),
     );
   }
@@ -26,131 +31,101 @@ class _AccountView extends StatelessWidget {
       body: SafeArea(
         child: BlocBuilder<AccountCubit, AccountState>(
           builder: (context, state) {
+            if (state is AccountLoading) {
+              return const Center(child: AppLoader());
+            }
+
+            final user = state is AccountLoaded ? state.user : null;
+            final displayName = user?.name.isNotEmpty == true
+                ? user!.name
+                : 'Аккаунт';
+
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
                 // Header
                 Row(
                   children: [
-                    const CircleAvatar(
-                      radius: 24,
-                      backgroundColor: AppColors.surface,
-                      child: Icon(Icons.person, color: AppColors.textSecondary),
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceLight,
+                        borderRadius: BorderRadius.circular(33),
+                      ),
+                      child: Center(
+                        child: AppIcons.svg(
+                          'ic_profile_unselected',
+                          width: 21,
+                          height: 21,
+                          color: AppColors.iconInactive,
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 12),
-                    const Text(
-                      'Account',
-                      style: TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const Spacer(),
-                    TextButton(
-                      onPressed: () {
-                        context.read<AccountCubit>().clearProfile();
-                      },
-                      child: const Text(
-                        'Logout',
-                        style: TextStyle(color: AppColors.gradientStart),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                if (state is AccountLoaded) ...[
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
                       children: [
-                        Text(
-                          state.user.login,
-                          style: const TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          state.user.email,
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 14,
+                        Text(displayName, style: AppTextStyles.h3Mob),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () async {
+                            if (user == null) return;
+                            final result = await context.push<bool>(
+                              '/account/edit',
+                              extra: user,
+                            );
+                            if (result == true && context.mounted) {
+                              context.read<AccountCubit>().loadProfile();
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: AppIcons.svg(
+                              'ic_edit',
+                              width: 24,
+                              height: 24,
+                              color: AppColors.iconInactive,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-                if (state is AccountEmpty)
-                  const Center(
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        context.read<AccountCubit>().clearProfile();
+                        context.go('/login');
+                      },
+                      child: Row(
+                        mainAxisAlignment: .center,
+                        children: [
+                          Text(
+                            'Выйти',
+                            style: AppTextStyles.fieldLabel.copyWith(
+                              color: AppColors.hovered,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          AppIcons.svg('ic_arrow_right', height: 12),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                if (state is AccountEmpty) ...[
+                  const SizedBox(height: 24),
+                  Center(
                     child: Text(
-                      'Please log in to see your profile.',
-                      style: TextStyle(color: AppColors.textSecondary),
+                      'Войдите, чтобы увидеть профиль.',
+                      style: AppTextStyles.bodySmall,
                     ),
                   ),
-                const SizedBox(height: 24),
-                _buildMenuItem(
-                  icon: Icons.settings_outlined,
-                  title: 'Settings',
-                  onTap: () {},
-                ),
-                _buildMenuItem(
-                  icon: Icons.help_outline,
-                  title: 'Help',
-                  onTap: () {},
-                ),
-                const SizedBox(height: 24),
-                TextButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.devices, color: AppColors.gradientStart),
-                  label: const Text(
-                    'Connect device',
-                    style: TextStyle(color: AppColors.gradientStart),
-                  ),
-                ),
+                ],
               ],
             );
           },
         ),
       ),
-    );
-  }
-
-  Widget _buildMenuItem({
-    required IconData icon,
-    required String title,
-    String? subtitle,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Icon(icon, color: AppColors.textPrimary),
-      title: Text(
-        title,
-        style: const TextStyle(
-          color: AppColors.textPrimary,
-          fontSize: 16,
-        ),
-      ),
-      subtitle: subtitle != null
-          ? Text(
-              subtitle,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 13,
-              ),
-            )
-          : null,
-      trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
-      onTap: onTap,
     );
   }
 }

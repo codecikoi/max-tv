@@ -48,7 +48,10 @@ class AuthRepository {
       login: login,
       password: password,
     );
-    await _tokenStorage.saveTokens(accessToken: response.accessToken);
+    await _tokenStorage.saveTokens(
+      accessToken: response.accessToken,
+      refreshToken: response.refreshToken,
+    );
     return response;
   }
 

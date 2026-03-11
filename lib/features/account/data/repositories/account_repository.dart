@@ -1,11 +1,42 @@
-import '../models/user_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-/// User data comes from login/register responses, not a dedicated endpoint.
-/// This repository stores and retrieves user data locally.
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../core/network/dio_client.dart';
+import '../models/user_model.dart';
+
 class AccountRepository {
   static const _userKey = 'cached_user';
+  final DioClient _dioClient;
+
+  AccountRepository(this._dioClient);
+
+  Future<UserModel> fetchProfile() async {
+    final response = await _dioClient.dio.get('/users/me');
+    final data = response.data;
+    final Map<String, dynamic> json;
+    if (data is Map<String, dynamic>) {
+      json = data.containsKey('data') && data['data'] is Map<String, dynamic>
+          ? data['data'] as Map<String, dynamic>
+          : data;
+    } else {
+      throw Exception('Unexpected response format');
+    }
+    final user = UserModel.fromJson(json);
+    await cacheUser(user);
+    return user;
+  }
+
+  Future<UserModel> updateProfile({
+    required String name,
+    required String login,
+  }) async {
+    await _dioClient.dio.patch('/users/me', data: {
+      'name': name,
+      'login': login,
+    });
+    return fetchProfile();
+  }
 
   Future<UserModel?> getCachedUser() async {
     final prefs = await SharedPreferences.getInstance();

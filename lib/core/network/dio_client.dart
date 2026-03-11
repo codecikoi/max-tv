@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:talker/talker.dart';
+import 'package:talker_dio_logger/talker_dio_logger.dart';
 import '../constants/app_constants.dart';
 import 'token_storage.dart';
 
@@ -6,7 +8,7 @@ class DioClient {
   late final Dio dio;
   final TokenStorage _tokenStorage;
 
-  DioClient(this._tokenStorage) {
+  DioClient(this._tokenStorage, Talker talker) {
     dio = Dio(
       BaseOptions(
         baseUrl: AppConstants.baseUrl,
@@ -23,9 +25,12 @@ class DioClient {
 
     dio.interceptors.add(_ErrorInterceptor());
 
-    dio.interceptors.add(LogInterceptor(
-      requestBody: true,
-      responseBody: true,
+    dio.interceptors.add(TalkerDioLogger(
+      talker: talker,
+      settings: const TalkerDioLoggerSettings(
+        printRequestData: true,
+        printResponseData: true,
+      ),
     ));
   }
 }
@@ -66,37 +71,32 @@ class _ErrorInterceptor extends Interceptor {
     final statusCode = err.response?.statusCode;
     String message;
 
-    switch (statusCode) {
-      case 400:
-        final data = err.response?.data;
-        if (data is Map<String, dynamic> && data.containsKey('message')) {
-          message = data['message'] as String;
-        } else {
+    final data = err.response?.data;
+    if (data is Map<String, dynamic> && data.containsKey('message')) {
+      message = data['message'] as String;
+    } else {
+      switch (statusCode) {
+        case 400:
           message = 'Неверный запрос.';
-        }
-        break;
-      case 401:
-        message = 'Unauthorized. Please log in again.';
-        break;
-      case 403:
-        message = 'Access denied.';
-        break;
-      case 404:
-        message = 'Resource not found.';
-        break;
-      case 422:
-        final data = err.response?.data;
-        if (data is Map<String, dynamic> && data.containsKey('message')) {
-          message = data['message'] as String;
-        } else {
-          message = 'Validation error.';
-        }
-        break;
-      case 500:
-        message = 'Server error. Please try again later.';
-        break;
-      default:
-        message = err.message ?? 'An unexpected error occurred.';
+          break;
+        case 401:
+          message = 'Неверный логин или пароль.';
+          break;
+        case 403:
+          message = 'Доступ запрещён.';
+          break;
+        case 404:
+          message = 'Ресурс не найден.';
+          break;
+        case 422:
+          message = 'Ошибка валидации.';
+          break;
+        case 500:
+          message = 'Ошибка сервера. Попробуйте позже.';
+          break;
+        default:
+          message = err.message ?? 'Что-то пошло не так.';
+      }
     }
 
     handler.next(DioException(

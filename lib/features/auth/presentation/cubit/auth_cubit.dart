@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/auth_repository.dart';
 import 'auth_state.dart';
@@ -24,7 +25,7 @@ class AuthCubit extends Cubit<AuthState> {
       );
       emit(AuthAuthenticated(accessToken: response.accessToken));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(_parseError(e)));
     }
   }
 
@@ -43,7 +44,7 @@ class AuthCubit extends Cubit<AuthState> {
         expiresAt: response.expiresAt,
       ));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(_parseError(e)));
     }
   }
 
@@ -59,7 +60,7 @@ class AuthCubit extends Cubit<AuthState> {
       );
       emit(AuthCodeVerified(message: response.message));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(_parseError(e)));
     }
   }
 
@@ -75,9 +76,9 @@ class AuthCubit extends Cubit<AuthState> {
         login: login,
         password: password,
       );
-      emit(AuthRegistered(user: response.user));
+      emit(AuthAuthenticated(accessToken: response.accessToken));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(_parseError(e)));
     }
   }
 
@@ -96,9 +97,18 @@ class AuthCubit extends Cubit<AuthState> {
         expiresAt: response.expiresAt,
       ));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(_parseError(e)));
     }
   }
+
+  String _parseError(Object e) {
+    if (e is DioException && e.message != null && e.message!.isNotEmpty) {
+      return e.message!;
+    }
+    return 'Что-то пошло не так. Попробуйте снова.';
+  }
+
+  void resetState() => emit(AuthInitial());
 
   Future<void> logout() async {
     await _repository.logout();

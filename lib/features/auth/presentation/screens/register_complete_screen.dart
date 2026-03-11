@@ -28,19 +28,48 @@ class _RegisterCompleteScreenState extends State<RegisterCompleteScreen> {
   static final _loginRegex = RegExp(r'^[a-zA-Z0-9_-]{4,30}$');
   static final _passwordRegex = RegExp(r'^.{8,64}$');
 
+  String? _loginError;
+  String? _passwordError;
+
   String? _validate() {
     final login = _loginController.text.trim();
     final password = _passwordController.text;
-    if (login.isEmpty || password.isEmpty) {
-      return 'Заполните все поля';
+
+    setState(() {
+      _loginError = null;
+      _passwordError = null;
+    });
+
+    if (login.isEmpty) {
+      setState(() => _loginError = 'Введите логин');
+      return '';
     }
     if (!_loginRegex.hasMatch(login)) {
-      return 'Логин: 4–30 символов, латиница, цифры, _, -';
+      setState(() => _loginError = 'Логин: 4–30 символов, латиница, цифры, _, -');
+      return '';
+    }
+    if (password.isEmpty) {
+      setState(() => _passwordError = 'Введите пароль');
+      return '';
     }
     if (!_passwordRegex.hasMatch(password)) {
-      return 'Пароль: 8–64 символа';
+      setState(() => _passwordError = 'Пароль: 8–64 символа');
+      return '';
     }
     return null;
+  }
+
+  void _clearErrors() {
+    if (_loginError != null || _passwordError != null) {
+      setState(() {
+        _loginError = null;
+        _passwordError = null;
+      });
+    }
+    final state = _cubit.state;
+    if (state is AuthError) {
+      _cubit.resetState();
+    }
   }
 
   @override
@@ -56,15 +85,8 @@ class _RegisterCompleteScreenState extends State<RegisterCompleteScreen> {
       value: _cubit,
       child: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
-          if (state is AuthRegistered) {
+          if (state is AuthAuthenticated) {
             context.go('/channels');
-          } else if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.live,
-              ),
-            );
           }
         },
         child: Scaffold(
@@ -90,19 +112,34 @@ class _RegisterCompleteScreenState extends State<RegisterCompleteScreen> {
                     style: AppTextStyles.h3Mob,
                   ),
                   const SizedBox(height: 32),
-                  AppTextField(
-                    controller: _loginController,
-                    label: 'Логин',
-                    hint: 'Придумайте логин',
-                    keyboardType: TextInputType.visiblePassword,
-                  ),
-                  const SizedBox(height: 16),
-                  AppTextField(
-                    controller: _passwordController,
-                    label: 'Пароль',
-                    hint: 'Придумайте пароль',
-                    obscureText: true,
-                    keyboardType: TextInputType.visiblePassword,
+                  BlocBuilder<AuthCubit, AuthState>(
+                    buildWhen: (prev, curr) =>
+                        curr is AuthError || curr is AuthInitial || curr is AuthLoading,
+                    builder: (context, state) {
+                      final serverError = state is AuthError ? state.message : null;
+                      return Column(
+                        children: [
+                          AppTextField(
+                            controller: _loginController,
+                            label: 'Логин',
+                            hint: 'Придумайте логин',
+                            keyboardType: TextInputType.visiblePassword,
+                            errorText: _loginError,
+                            onChanged: (_) => _clearErrors(),
+                          ),
+                          const SizedBox(height: 16),
+                          AppTextField(
+                            controller: _passwordController,
+                            label: 'Пароль',
+                            hint: 'Придумайте пароль',
+                            obscureText: true,
+                            keyboardType: TextInputType.visiblePassword,
+                            errorText: _passwordError ?? serverError,
+                            onChanged: (_) => _clearErrors(),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   const Spacer(),
                   BlocBuilder<AuthCubit, AuthState>(
@@ -117,15 +154,7 @@ class _RegisterCompleteScreenState extends State<RegisterCompleteScreen> {
                         width: double.infinity,
                         onPressed: () {
                           final error = _validate();
-                          if (error != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(error),
-                                backgroundColor: AppColors.live,
-                              ),
-                            );
-                            return;
-                          }
+                          if (error != null) return;
                           _cubit.registerComplete(
                             email: widget.email,
                             login: _loginController.text.trim(),

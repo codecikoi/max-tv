@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
+import '../theme/app_icons.dart';
 import '../theme/app_text_styles.dart';
 
 class AppTextField extends StatelessWidget {
   final TextEditingController? controller;
   final String? label;
   final String? hint;
+  final String? errorText;
   final bool obscureText;
+  final bool enabled;
   final TextInputType? keyboardType;
   final ValueChanged<String>? onChanged;
 
@@ -16,13 +19,17 @@ class AppTextField extends StatelessWidget {
     this.controller,
     this.label,
     this.hint,
+    this.errorText,
     this.obscureText = false,
+    this.enabled = true,
     this.keyboardType,
     this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
+    final hasError = errorText != null && errorText!.isNotEmpty;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -36,15 +43,23 @@ class AppTextField extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.surfaceLight,
             borderRadius: BorderRadius.circular(10),
+            border: hasError
+                ? Border.all(color: AppColors.error, width: 1)
+                : null,
           ),
           child: TextField(
             controller: controller,
             obscureText: obscureText,
+            enabled: enabled,
             keyboardType: keyboardType,
             onChanged: onChanged,
             autocorrect: false,
             enableSuggestions: false,
-            style: AppTextStyles.inputText,
+            style: enabled
+                ? AppTextStyles.inputText
+                : AppTextStyles.inputText.copyWith(
+                    color: AppColors.iconInactive,
+                  ),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: AppTextStyles.placeholder,
@@ -56,6 +71,27 @@ class AppTextField extends StatelessWidget {
             ),
           ),
         ),
+        if (hasError)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 18),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppIcons.svg('ic_error', width: 20, height: 20),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      errorText!,
+                      style: AppTextStyles.captionSmall.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
       ],
     );
   }

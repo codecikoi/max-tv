@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 import '../network/dio_client.dart';
 import '../network/token_storage.dart';
 import '../../features/auth/data/datasources/auth_remote_datasource.dart';
@@ -23,8 +24,11 @@ final getIt = GetIt.instance;
 
 void configureDependencies() {
   // Core
+  getIt.registerLazySingleton<Talker>(() => Talker());
   getIt.registerLazySingleton<TokenStorage>(() => TokenStorage());
-  getIt.registerLazySingleton<DioClient>(() => DioClient(getIt<TokenStorage>()));
+  getIt.registerLazySingleton<DioClient>(
+    () => DioClient(getIt<TokenStorage>(), getIt<Talker>()),
+  );
 
   // Auth
   getIt.registerLazySingleton<AuthRemoteDatasource>(
@@ -72,9 +76,9 @@ void configureDependencies() {
 
   // Account
   getIt.registerLazySingleton<AccountRepository>(
-    () => AccountRepository(),
+    () => AccountRepository(getIt<DioClient>()),
   );
-  getIt.registerFactory<AccountCubit>(
+  getIt.registerLazySingleton<AccountCubit>(
     () => AccountCubit(getIt<AccountRepository>()),
   );
 

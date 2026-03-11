@@ -15,8 +15,14 @@ class AppTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 12,
+        bottom: 12 + bottomPadding,
+      ),
       color: AppColors.background,
       child: Container(
         height: 56,
@@ -25,21 +31,44 @@ class AppTabBar extends StatelessWidget {
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(48),
         ),
-        child: Row(
-          children: [
-            _buildTab(
-              index: 0,
-              selectedIcon: 'ic_tv_selected',
-              unselectedIcon: 'ic_tv_unselected',
-              label: 'Просмотр ТВ',
-            ),
-            _buildTab(
-              index: 1,
-              selectedIcon: 'ic_profile_selected',
-              unselectedIcon: 'ic_profile_unselected',
-              label: 'Профиль',
-            ),
-          ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final tabWidth = constraints.maxWidth / 2;
+            return Stack(
+              children: [
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                  left: currentIndex * tabWidth,
+                  top: 0,
+                  bottom: 0,
+                  width: tabWidth,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.pillActive,
+                      borderRadius: BorderRadius.circular(33),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    _buildTab(
+                      index: 0,
+                      selectedIcon: 'ic_tv_selected',
+                      unselectedIcon: 'ic_tv_unselected',
+                      label: 'Просмотр ТВ',
+                    ),
+                    _buildTab(
+                      index: 1,
+                      selectedIcon: 'ic_profile_selected',
+                      unselectedIcon: 'ic_profile_unselected',
+                      label: 'Профиль',
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -57,52 +86,54 @@ class AppTabBar extends StatelessWidget {
       child: GestureDetector(
         onTap: () => onTap(index),
         behavior: HitTestBehavior.opaque,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          height: 51,
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.pillActive : Colors.transparent,
-            borderRadius: BorderRadius.circular(33),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (isSelected)
-                ShaderMask(
-                  shaderCallback: (bounds) =>
-                      AppColors.primaryGradient.createShader(bounds),
-                  blendMode: BlendMode.srcIn,
-                  child: SvgPicture.asset(
-                    'assets/icons/$selectedIcon.svg',
-                    width: 24,
-                    height: 24,
-                  ),
-                )
-              else
-                SvgPicture.asset(
-                  'assets/icons/$unselectedIcon.svg',
-                  width: 24,
-                  height: 24,
-                  colorFilter: const ColorFilter.mode(
-                    AppColors.iconInactive,
-                    BlendMode.srcIn,
-                  ),
-                ),
-              if (isSelected) ...[
-                const SizedBox(height: 4),
-                ShaderMask(
-                  shaderCallback: (bounds) =>
-                      AppColors.primaryGradient.createShader(bounds),
-                  blendMode: BlendMode.srcIn,
-                  child: Text(
-                    label,
-                    style:
-                        AppTextStyles.tabLabel.copyWith(color: Colors.white),
-                  ),
-                ),
-              ],
-            ],
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 250),
+              child: isSelected
+                  ? ShaderMask(
+                      key: ValueKey('${index}_selected'),
+                      shaderCallback: (bounds) =>
+                          AppColors.primaryGradient.createShader(bounds),
+                      blendMode: BlendMode.srcIn,
+                      child: SvgPicture.asset(
+                        'assets/icons/$selectedIcon.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                    )
+                  : SvgPicture.asset(
+                      key: ValueKey('${index}_unselected'),
+                      'assets/icons/$unselectedIcon.svg',
+                      width: 24,
+                      height: 24,
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.iconInactive,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+            ),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              child: isSelected
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: ShaderMask(
+                        shaderCallback: (bounds) =>
+                            AppColors.primaryGradient.createShader(bounds),
+                        blendMode: BlendMode.srcIn,
+                        child: Text(
+                          label,
+                          style: AppTextStyles.tabLabel
+                              .copyWith(color: Colors.white),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+          ],
         ),
       ),
     );

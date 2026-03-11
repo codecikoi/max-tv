@@ -39,13 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
         listener: (context, state) {
           if (state is AuthAuthenticated) {
             context.go('/channels');
-          } else if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.live,
-              ),
-            );
           }
         },
         child: Scaffold(
@@ -66,12 +59,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 16),
-                  AppTextField(
-                    controller: _passwordController,
-                    label: 'Пароль',
-                    hint: 'Введите пароль',
-                    obscureText: true,
-                    keyboardType: TextInputType.visiblePassword,
+                  BlocBuilder<AuthCubit, AuthState>(
+                    buildWhen: (prev, curr) =>
+                        curr is AuthError || curr is AuthInitial || curr is AuthLoading || curr is AuthAuthenticated,
+                    builder: (context, state) {
+                      final errorText = state is AuthError ? state.message : null;
+                      return AppTextField(
+                        controller: _passwordController,
+                        label: 'Пароль',
+                        hint: 'Введите пароль',
+                        obscureText: true,
+                        keyboardType: TextInputType.visiblePassword,
+                        errorText: errorText,
+                        onChanged: (_) {
+                          if (state is AuthError) {
+                            _cubit.resetState();
+                          }
+                        },
+                      );
+                    },
                   ),
                   const SizedBox(height: 8),
                   Align(
