@@ -1,0 +1,63 @@
+name: max_tv
+description: "A new Flutter project."
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  flutter_bloc: ^9.1.0
+  go_router: ^14.8.1
+  dio: ^5.8.0+1
+  get_it: ^8.0.3
+  cached_network_image: ^3.4.1
+  intl: ^0.20.2
+  shared_preferences: ^2.5.3
+  flutter_secure_storage: ^9.2.4
+  equatable: ^2.0.7
+  json_annotation: ^4.9.0
+  flutter_svg: ^2.0.17
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.15
+  json_serializable: ^6.9.4
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/icons/
+    - assets/images/
+
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
+    - family: Bounded
+      fonts:
+        - asset: assets/fonts/Bounded-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/Bounded-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Bounded-Black.ttf
+          weight: 900
