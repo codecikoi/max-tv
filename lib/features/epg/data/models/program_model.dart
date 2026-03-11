@@ -35,6 +35,13 @@ class ProgramModel {
   String? get formattedStartTime => _extractTime(startTime);
   String? get formattedEndTime => _extractTime(endTime);
 
+  /// Extract date part "DD-MM-YYYY" from startTime
+  String? get startDate {
+    if (startTime == null) return null;
+    final parts = startTime!.split(' ');
+    return parts.isNotEmpty ? parts[0] : null;
+  }
+
   String? _extractTime(String? dateTime) {
     if (dateTime == null) return null;
     final parts = dateTime.split(' ');

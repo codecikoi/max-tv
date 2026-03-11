@@ -22,6 +22,7 @@ import '../../features/tariffs/data/datasources/tariffs_remote_datasource.dart';
 import '../../features/tariffs/data/repositories/tariffs_repository.dart';
 import '../../features/tariffs/presentation/cubit/tariffs_cubit.dart';
 import '../../features/device_auth/data/datasources/device_auth_remote_datasource.dart';
+import '../../features/channels/presentation/widgets/category_filter_sheet.dart';
 
 final getIt = GetIt.instance;
 
@@ -48,15 +49,16 @@ void configureDependencies() {
   getIt.registerLazySingleton<ChannelsRepository>(
     () => ChannelsRepository(getIt<ChannelsRemoteDatasource>()),
   );
-  getIt.registerFactory<ChannelsCubit>(
-    () => ChannelsCubit(getIt<ChannelsRepository>()),
-  );
 
   getIt.registerLazySingleton<FavoritesRemoteDatasource>(
     () => FavoritesRemoteDatasource(getIt<DioClient>()),
   );
   getIt.registerLazySingleton<FavoritesRepository>(
     () => FavoritesRepository(getIt<FavoritesRemoteDatasource>()),
+  );
+
+  getIt.registerFactory<ChannelsCubit>(
+    () => ChannelsCubit(getIt<ChannelsRepository>(), getIt<FavoritesRepository>()),
   );
   getIt.registerFactory<FavoritesCubit>(
     () => FavoritesCubit(getIt<FavoritesRepository>()),
@@ -98,5 +100,9 @@ void configureDependencies() {
 
   getIt.registerLazySingleton<DeviceAuthRemoteDatasource>(
     () => DeviceAuthRemoteDatasource(getIt<DioClient>()),
+  );
+
+  getIt.registerLazySingleton<CategoryFilterCache>(
+    () => CategoryFilterCache(),
   );
 }

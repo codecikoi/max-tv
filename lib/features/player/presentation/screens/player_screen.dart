@@ -89,7 +89,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   String get _dateParam {
     final d = _selectedDate;
-    return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+    return '${d.day.toString().padLeft(2, '0')}-${d.month.toString().padLeft(2, '0')}-${d.year}';
   }
 
   Future<void> _loadPrograms() async {
@@ -106,6 +106,59 @@ class _PlayerScreenState extends State<PlayerScreen> {
       }
     } catch (_) {
       if (mounted) setState(() => _programsLoading = false);
+    }
+  }
+
+  ProgramModel? _activeProgram;
+
+  Future<void> _switchStream(String url, {bool isLive = false}) async {
+    _chewieController?.dispose();
+    _videoController?.dispose();
+    _chewieController = null;
+    _videoController = null;
+    _hasError = false;
+    setState(() {});
+
+    _videoController = VideoPlayerController.networkUrl(Uri.parse(url));
+
+    try {
+      await _videoController!.initialize();
+      _chewieController = ChewieController(
+        videoPlayerController: _videoController!,
+        autoPlay: true,
+        isLive: isLive,
+        showOptions: false,
+        showControls: true,
+        allowFullScreen: true,
+        deviceOrientationsOnEnterFullScreen: [
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ],
+        deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
+        materialProgressColors: ChewieProgressColors(
+          playedColor: AppColors.hovered,
+          handleColor: AppColors.hovered,
+          bufferedColor: AppColors.bw4,
+          backgroundColor: AppColors.surfaceLight,
+        ),
+      );
+      if (mounted) setState(() {});
+    } catch (_) {
+      if (mounted) setState(() => _hasError = true);
+    }
+  }
+
+  void _onProgramTap(ProgramModel program) {
+    if (program.current) {
+      // Switch back to live channel stream
+      if (widget.streamUrl != null && widget.streamUrl!.isNotEmpty) {
+        setState(() => _activeProgram = program);
+        _switchStream(widget.streamUrl!, isLive: true);
+      }
+    } else if (program.isArchive && program.streamUrl != null && program.streamUrl!.isNotEmpty) {
+      // Switch to archive stream
+      setState(() => _activeProgram = program);
+      _switchStream(program.streamUrl!);
     }
   }
 
@@ -258,6 +311,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   List<ProgramModel> get _filteredPrograms {
     var list = List<ProgramModel>.from(_programs);
+    // Filter by selected date (format: DD-MM-YYYY)
+    final dateStr = _dateParam;
+    list = list.where((p) => p.startDate == dateStr).toList();
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
       list = list.where((p) => p.title.toLowerCase().contains(query)).toList();
@@ -443,47 +499,52 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   Widget _buildProgramTile(ProgramModel program) {
     final isCurrent = program.current;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: isCurrent ? AppColors.surfaceLight : null,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Time row + LIVE badge
-          Row(
-            children: [
-              Text(
-                '${program.formattedStartTime ?? ''} - ${program.formattedEndTime ?? ''}',
-                style: AppTextStyles.h4Mob.copyWith(
-                  color: isCurrent ? Colors.white : AppColors.bw6,
+    final isTappable = isCurrent || (program.isArchive && program.streamUrl != null && program.streamUrl!.isNotEmpty);
+    final isActive = _activeProgram?.id == program.id;
+    return GestureDetector(
+      onTap: isTappable ? () => _onProgramTap(program) : null,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: (isCurrent || isActive) ? AppColors.surfaceLight : null,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Time row + LIVE badge
+            Row(
+              children: [
+                Text(
+                  '${program.formattedStartTime ?? ''} - ${program.formattedEndTime ?? ''}',
+                  style: AppTextStyles.h4Mob.copyWith(
+                    color: isCurrent ? Colors.white : AppColors.bw6,
+                  ),
                 ),
-              ),
-              if (isCurrent) ...[const SizedBox(width: 12), _buildLiveBadge()],
-            ],
-          ),
-          const SizedBox(height: 8),
-          // Title
-          Text(
-            program.title,
-            style: AppTextStyles.captionMob.copyWith(
-              color: isCurrent ? Colors.white : AppColors.bw6,
+                if (isCurrent) ...[const SizedBox(width: 12), _buildLiveBadge()],
+              ],
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          if (program.description != null) ...[
-            const SizedBox(height: 2),
+            const SizedBox(height: 8),
+            // Title
             Text(
-              program.description!,
-              style: AppTextStyles.captionMob.copyWith(color: AppColors.bw4),
-              maxLines: 3,
+              program.title,
+              style: AppTextStyles.captionMob.copyWith(
+                color: isCurrent ? Colors.white : AppColors.bw6,
+              ),
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
+            if (program.description != null) ...[
+              const SizedBox(height: 2),
+              Text(
+                program.description!,
+                style: AppTextStyles.captionMob.copyWith(color: AppColors.bw4),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

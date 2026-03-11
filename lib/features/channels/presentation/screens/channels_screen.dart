@@ -15,6 +15,7 @@ import '../../../../core/widgets/skeleton_channel_card.dart';
 import '../../data/models/channel_model.dart';
 import '../cubit/channels_cubit.dart';
 import '../cubit/channels_state.dart';
+import '../widgets/category_filter_sheet.dart';
 import '../widgets/channel_card.dart';
 
 class ChannelsScreen extends StatelessWidget {
@@ -42,6 +43,7 @@ class _ChannelsViewState extends State<_ChannelsView> {
   ChannelModel? _activeChannel;
   bool _hasError = false;
   bool _playerInitialized = false;
+  FilterResult _currentFilter = const FilterResult(type: FilterType.all);
 
   @override
   void dispose() {
@@ -124,6 +126,42 @@ class _ChannelsViewState extends State<_ChannelsView> {
     }
   }
 
+  Future<void> _openFilter() async {
+    final result = await showCategoryFilterSheet(
+      context,
+      currentFilter: _currentFilter,
+    );
+    if (result == null || !mounted) return;
+
+    setState(() => _currentFilter = result);
+    final cubit = context.read<ChannelsCubit>();
+
+    switch (result.type) {
+      case FilterType.all:
+        cubit.loadChannels();
+        break;
+      case FilterType.favorites:
+        cubit.loadFavorites();
+        break;
+      case FilterType.category:
+        if (result.categoryId != null) {
+          cubit.loadByCategory(result.categoryId!);
+        }
+        break;
+    }
+  }
+
+  String get _filterLabel {
+    switch (_currentFilter.type) {
+      case FilterType.all:
+        return 'Все телеканалы';
+      case FilterType.favorites:
+        return 'Избранные';
+      case FilterType.category:
+        return _currentFilter.categoryName ?? 'Категория';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -202,12 +240,10 @@ class _ChannelsViewState extends State<_ChannelsView> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     children: [
-                      Text('Все телеканалы', style: AppTextStyles.caption),
+                      Text(_filterLabel, style: AppTextStyles.caption),
                       const Spacer(),
                       GestureDetector(
-                        onTap: () {
-                          // TODO: filter
-                        },
+                        onTap: _openFilter,
                         child: Container(
                           height: 36,
                           padding: const EdgeInsets.only(
@@ -254,19 +290,40 @@ class _ChannelsViewState extends State<_ChannelsView> {
                         return Center(child: Text(state.message));
                       }
                       if (state is ChannelsLoaded) {
-                        return ListView.separated(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: state.channels.length,
-                          separatorBuilder: (_, _) => const SizedBox(height: 2),
-                          itemBuilder: (context, index) {
-                            final channel = state.channels[index];
-                            final isActive = _activeChannel?.id == channel.id;
-                            return ChannelCard(
-                              channel: channel,
-                              isActive: isActive,
-                              onTap: () => _onChannelTap(channel),
-                            );
+                        return NotificationListener<ScrollNotification>(
+                          onNotification: (notification) {
+                            if (notification is ScrollEndNotification &&
+                                notification.metrics.extentAfter < 200 &&
+                                state.meta.hasNextPage) {
+                              context.read<ChannelsCubit>().loadNextPage();
+                            }
+                            return false;
                           },
+                          child: ListView.separated(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemCount: state.channels.length + (state.meta.hasNextPage ? 1 : 0),
+                            separatorBuilder: (_, _) => const SizedBox(height: 2),
+                            itemBuilder: (context, index) {
+                              if (index >= state.channels.length) {
+                                return const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: AppColors.hovered,
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                );
+                              }
+                              final channel = state.channels[index];
+                              final isActive = _activeChannel?.id == channel.id;
+                              return ChannelCard(
+                                channel: channel,
+                                isActive: isActive,
+                                onTap: () => _onChannelTap(channel),
+                              );
+                            },
+                          ),
                         );
                       }
                       return const SizedBox.shrink();

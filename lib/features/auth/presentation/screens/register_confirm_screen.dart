@@ -121,10 +121,11 @@ class _RegisterConfirmScreenState extends State<RegisterConfirmScreen> {
                   const SizedBox(height: 24),
                   GestureDetector(
                     onTap: () => context.pop(),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: Colors.white,
-                      size: 20,
+                    child: AppIcons.svg(
+                      'ic_arrow_back',
+                      width: 12,
+                      height: 12,
+                      color: AppColors.bw6,
                     ),
                   ),
                   const SizedBox(height: 24),

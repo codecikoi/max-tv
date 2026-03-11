@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_loader.dart';
@@ -100,10 +101,11 @@ class _RegisterCompleteScreenState extends State<RegisterCompleteScreen> {
                   const SizedBox(height: 24),
                   GestureDetector(
                     onTap: () => context.pop(),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: Colors.white,
-                      size: 20,
+                    child: AppIcons.svg(
+                      'ic_arrow_back',
+                      width: 12,
+                      height: 12,
+                      color: AppColors.bw6,
                     ),
                   ),
                   const SizedBox(height: 24),

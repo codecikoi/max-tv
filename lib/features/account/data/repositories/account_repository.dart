@@ -54,4 +54,28 @@ class AccountRepository {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userKey);
   }
+
+  Future<void> toggleNsfw() async {
+    await _dioClient.dio.get('/nsfw/toggle');
+  }
+
+  Future<void> setNsfwPin(String pin) async {
+    await _dioClient.dio.post('/nsfw/set_pin', data: {'pin': pin});
+  }
+
+  Future<bool> checkNsfwPin(String pin) async {
+    final response = await _dioClient.dio.get('/nsfw/check_pin', queryParameters: {'pin': pin});
+    return response.statusCode == 200;
+  }
+
+  Future<void> resetNsfwPin(String password) async {
+    await _dioClient.dio.get('/nsfw/reset_pin', queryParameters: {'password': password});
+  }
+
+  Future<void> sendPasswordResetEmail(String email) async {
+    await _dioClient.dio.post('/users/send_password_reset_email', data: {
+      'email': email,
+      'language': 'ru',
+    });
+  }
 }

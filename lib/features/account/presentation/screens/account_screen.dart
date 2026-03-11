@@ -129,19 +129,18 @@ class _AccountView extends StatelessWidget {
                 const SizedBox(height: 12),
                 _buildSubscriptionsCard(context),
                 const SizedBox(height: 12),
-                AccountMenuTile(
-                  icon: 'ic_orders',
-                  title: 'Покупки',
-                  onTap: () {
-                    // TODO: навигация на покупки
-                  },
-                ),
-                const SizedBox(height: 12),
+                // AccountMenuTile(
+                //   icon: 'ic_orders',
+                //   title: 'Покупки',
+                //   onTap: () {},
+                // ),
+                // const SizedBox(height: 12),
                 AccountMenuTile(
                   icon: 'ic_settings',
                   title: 'Настройки',
                   onTap: () {
-                    // TODO: навигация на настройки
+                    if (user == null) return;
+                    context.push('/account/settings', extra: user);
                   },
                 ),
                 const SizedBox(height: 12),

@@ -17,6 +17,7 @@ import '../features/player/presentation/screens/player_screen.dart';
 import '../features/account/presentation/screens/account_screen.dart';
 import '../features/account/data/models/user_model.dart';
 import '../features/account/presentation/screens/edit_profile_screen.dart';
+import '../features/account/presentation/screens/settings_screen.dart';
 import '../features/tariffs/presentation/screens/tariffs_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -57,6 +58,13 @@ final appRouter = GoRouter(
       path: '/account/edit',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => EditProfileScreen(
+        user: state.extra! as UserModel,
+      ),
+    ),
+    GoRoute(
+      path: '/account/settings',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => SettingsScreen(
         user: state.extra! as UserModel,
       ),
     ),

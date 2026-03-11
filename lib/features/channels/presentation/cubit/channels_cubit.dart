@@ -1,12 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/models/pagination_meta.dart';
 import '../../data/repositories/channels_repository.dart';
+import '../../data/repositories/favorites_repository.dart';
 import 'channels_state.dart';
 
 class ChannelsCubit extends Cubit<ChannelsState> {
   final ChannelsRepository _repository;
+  final FavoritesRepository _favoritesRepository;
 
-  ChannelsCubit(this._repository) : super(ChannelsInitial());
+  ChannelsCubit(this._repository, this._favoritesRepository) : super(ChannelsInitial());
 
   Future<void> loadChannels({int page = 1}) async {
     emit(ChannelsLoading());
@@ -49,6 +52,30 @@ class ChannelsCubit extends Cubit<ChannelsState> {
       } catch (e) {
         _handleError(e);
       }
+    }
+  }
+
+  Future<void> loadFavorites({int page = 1}) async {
+    emit(ChannelsLoading());
+    try {
+      final result = await _favoritesRepository.getFavorites(page: page);
+      emit(ChannelsLoaded(channels: result.data, meta: result.meta));
+    } catch (e) {
+      _handleError(e);
+    }
+  }
+
+  Future<void> loadByCategory(int categoryId) async {
+    emit(ChannelsLoading());
+    try {
+      final category = await _repository.getCategory(categoryId);
+      final channels = category.channels ?? [];
+      emit(ChannelsLoaded(
+        channels: channels,
+        meta: const PaginationMeta(currentPage: 1, lastPage: 1, total: 0, perPage: 15),
+      ));
+    } catch (e) {
+      _handleError(e);
     }
   }
 
