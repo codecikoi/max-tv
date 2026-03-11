@@ -104,6 +104,31 @@ class AppTextStyles {
     color: AppColors.bw9999,
   );
 
+  static final h2Mob = TextStyle(
+    fontFamily: _bounded,
+    fontVariations: const [FontVariation('wght', 566)],
+    fontSize: 18,
+    height: 24 / 18,
+    color: AppColors.bw9999,
+  );
+
+  static const tagMob = TextStyle(
+    fontFamily: _inter,
+    fontWeight: FontWeight.w500,
+    fontSize: 10,
+    height: 14 / 10,
+    letterSpacing: 1.1,
+    color: AppColors.bw4,
+  );
+
+  static const captionMob = TextStyle(
+    fontFamily: _inter,
+    fontWeight: FontWeight.w500,
+    fontSize: 12,
+    height: 14 / 12,
+    color: AppColors.bw4,
+  );
+
   static const captionSmall = TextStyle(
     fontFamily: _inter,
     fontWeight: FontWeight.w400,

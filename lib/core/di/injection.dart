@@ -18,6 +18,9 @@ import '../../features/account/data/repositories/account_repository.dart';
 import '../../features/account/presentation/cubit/account_cubit.dart';
 import '../../features/blog/data/datasources/blog_remote_datasource.dart';
 import '../../features/blog/data/repositories/blog_repository.dart';
+import '../../features/tariffs/data/datasources/tariffs_remote_datasource.dart';
+import '../../features/tariffs/data/repositories/tariffs_repository.dart';
+import '../../features/tariffs/presentation/cubit/tariffs_cubit.dart';
 import '../../features/device_auth/data/datasources/device_auth_remote_datasource.dart';
 
 final getIt = GetIt.instance;
@@ -81,6 +84,16 @@ void configureDependencies() {
   );
   getIt.registerLazySingleton<BlogRepository>(
     () => BlogRepository(getIt<BlogRemoteDatasource>()),
+  );
+
+  getIt.registerLazySingleton<TariffsRemoteDatasource>(
+    () => TariffsRemoteDatasource(getIt<DioClient>()),
+  );
+  getIt.registerLazySingleton<TariffsRepository>(
+    () => TariffsRepository(getIt<TariffsRemoteDatasource>()),
+  );
+  getIt.registerFactory<TariffsCubit>(
+    () => TariffsCubit(getIt<TariffsRepository>()),
   );
 
   getIt.registerLazySingleton<DeviceAuthRemoteDatasource>(

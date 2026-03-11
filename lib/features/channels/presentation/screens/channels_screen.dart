@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -253,9 +254,7 @@ class _TariffExpiredScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 40,
                 child: GestureDetector(
-                  onTap: () {
-                    // TODO: выбрать тариф
-                  },
+                  onTap: () => context.push('/tariffs'),
                   child: Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(

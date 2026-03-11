@@ -32,6 +32,15 @@ class AppColors {
     colors: [gradientStart, gradientEnd],
   );
 
+  static const purpleGradientStart = Color(0xFF8B3DF7);
+  static const purpleGradientEnd = Color(0xFF7DB3FA);
+
+  static const purpleGradient = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [purpleGradientStart, purpleGradientEnd],
+  );
+
   static const error = Color(0xFFA52921);
   static const success = Color(0xFF19724E);
 
