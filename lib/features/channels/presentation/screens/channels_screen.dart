@@ -1,14 +1,18 @@
 import 'dart:ui';
 
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/app_loader.dart';
+import '../../../../core/widgets/skeleton_channel_card.dart';
+import '../../data/models/channel_model.dart';
 import '../cubit/channels_cubit.dart';
 import '../cubit/channels_state.dart';
 import '../widgets/channel_card.dart';
@@ -25,14 +29,113 @@ class ChannelsScreen extends StatelessWidget {
   }
 }
 
-class _ChannelsView extends StatelessWidget {
+class _ChannelsView extends StatefulWidget {
   const _ChannelsView();
+
+  @override
+  State<_ChannelsView> createState() => _ChannelsViewState();
+}
+
+class _ChannelsViewState extends State<_ChannelsView> {
+  VideoPlayerController? _videoController;
+  ChewieController? _chewieController;
+  ChannelModel? _activeChannel;
+  bool _hasError = false;
+  bool _playerInitialized = false;
+
+  @override
+  void dispose() {
+    _chewieController?.dispose();
+    _videoController?.dispose();
+    super.dispose();
+  }
+
+  Future<void> _initPlayer(ChannelModel channel) async {
+    if (_activeChannel?.id == channel.id && _playerInitialized) return;
+
+    _chewieController?.dispose();
+    _videoController?.dispose();
+    _chewieController = null;
+    _videoController = null;
+    _hasError = false;
+    _playerInitialized = true;
+    _activeChannel = channel;
+    setState(() {});
+
+    if (channel.streamUrl == null || channel.streamUrl!.isEmpty) {
+      setState(() => _hasError = true);
+      return;
+    }
+
+    _videoController = VideoPlayerController.networkUrl(
+      Uri.parse(channel.streamUrl!),
+    );
+
+    try {
+      await _videoController!.initialize();
+      _chewieController = ChewieController(
+        videoPlayerController: _videoController!,
+        autoPlay: true,
+        isLive: true,
+        showOptions: false,
+        showControls: true,
+        allowFullScreen: true,
+        deviceOrientationsOnEnterFullScreen: [
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ],
+        deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
+        materialProgressColors: ChewieProgressColors(
+          playedColor: AppColors.hovered,
+          handleColor: AppColors.hovered,
+          bufferedColor: AppColors.bw4,
+          backgroundColor: AppColors.surfaceLight,
+        ),
+      );
+      if (mounted) setState(() {});
+    } catch (_) {
+      if (mounted) setState(() => _hasError = true);
+    }
+  }
+
+  Future<void> _onChannelTap(ChannelModel channel) async {
+    // Stop current stream completely before navigating
+    _chewieController?.pause();
+    _videoController?.pause();
+
+    // Update active channel for highlighting
+    setState(() => _activeChannel = channel);
+
+    // Navigate to player screen and wait for return
+    await context.push(
+      '/channels/player/${channel.id}',
+      extra: {
+        'streamUrl': channel.streamUrl,
+        'channelName': channel.name,
+        'channelLogoUrl': channel.logoUrl,
+        'isFavourite': channel.isFavourite,
+      },
+    );
+
+    // When returning, init player for the active channel
+    if (mounted) {
+      _playerInitialized = false;
+      _initPlayer(channel);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: BlocBuilder<ChannelsCubit, ChannelsState>(
+        child: BlocConsumer<ChannelsCubit, ChannelsState>(
+          listener: (context, state) {
+            if (state is ChannelsLoaded &&
+                state.channels.isNotEmpty &&
+                !_playerInitialized) {
+              _initPlayer(state.channels.first);
+            }
+          },
           builder: (context, state) {
             if (state is ChannelsTariffExpired) {
               return const _TariffExpiredScreen();
@@ -75,6 +178,26 @@ class _ChannelsView extends StatelessWidget {
                     ),
                   ),
                 ),
+                // Embedded player
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: _hasError
+                          ? _buildErrorView()
+                          : _chewieController != null
+                          ? Chewie(controller: _chewieController!)
+                          : const Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.hovered,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
@@ -120,11 +243,12 @@ class _ChannelsView extends StatelessWidget {
                     ],
                   ),
                 ),
+                const SizedBox(height: 10),
                 Expanded(
                   child: Builder(
                     builder: (context) {
                       if (state is ChannelsLoading) {
-                        return const Center(child: AppLoader());
+                        return const SkeletonChannelList();
                       }
                       if (state is ChannelsError) {
                         return Center(child: Text(state.message));
@@ -133,9 +257,15 @@ class _ChannelsView extends StatelessWidget {
                         return ListView.separated(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           itemCount: state.channels.length,
-                          separatorBuilder: (_, __) => const Divider(),
+                          separatorBuilder: (_, _) => const SizedBox(height: 2),
                           itemBuilder: (context, index) {
-                            return ChannelCard(channel: state.channels[index]);
+                            final channel = state.channels[index];
+                            final isActive = _activeChannel?.id == channel.id;
+                            return ChannelCard(
+                              channel: channel,
+                              isActive: isActive,
+                              onTap: () => _onChannelTap(channel),
+                            );
                           },
                         );
                       }
@@ -146,6 +276,30 @@ class _ChannelsView extends StatelessWidget {
               ],
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorView() {
+    return Container(
+      color: AppColors.surface,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppIcons.svg(
+              'ic_play',
+              width: 48,
+              height: 48,
+              color: AppColors.live,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Не удалось загрузить поток',
+              style: TextStyle(color: Colors.white, fontSize: 14),
+            ),
+          ],
         ),
       ),
     );

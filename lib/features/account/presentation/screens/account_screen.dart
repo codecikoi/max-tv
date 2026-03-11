@@ -9,6 +9,8 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_loader.dart';
 import '../cubit/account_cubit.dart';
 import '../cubit/account_state.dart';
+import '../widgets/account_menu_tile.dart';
+import '../widgets/current_tariff_card.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
@@ -96,7 +98,7 @@ class _AccountView extends StatelessWidget {
                         context.go('/login');
                       },
                       child: Row(
-                        mainAxisAlignment: .center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             'Выйти',
@@ -120,9 +122,97 @@ class _AccountView extends StatelessWidget {
                     ),
                   ),
                 ],
+                if (user?.tariff != null) ...[
+                  const SizedBox(height: 16),
+                  CurrentTariffCard(tariff: user!.tariff!),
+                ],
+                const SizedBox(height: 12),
+                _buildSubscriptionsCard(context),
+                const SizedBox(height: 12),
+                AccountMenuTile(
+                  icon: 'ic_orders',
+                  title: 'Покупки',
+                  onTap: () {
+                    // TODO: навигация на покупки
+                  },
+                ),
+                const SizedBox(height: 12),
+                AccountMenuTile(
+                  icon: 'ic_settings',
+                  title: 'Настройки',
+                  onTap: () {
+                    // TODO: навигация на настройки
+                  },
+                ),
+                const SizedBox(height: 12),
+                AccountMenuTile(
+                  icon: 'ic_help',
+                  title: 'Помощь',
+                  onTap: () {
+                    // TODO: навигация на помощь
+                  },
+                ),
+                const SizedBox(height: 24),
+                _buildDeviceLink(context),
               ],
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubscriptionsCard(BuildContext context) {
+    return GestureDetector(
+      onTap: () => context.push('/tariffs'),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.surfaceLight, width: 2),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Все подписки', style: AppTextStyles.h3Mob),
+            const SizedBox(height: 8),
+            Text(
+              'Список всех тарифов',
+              style: AppTextStyles.fieldLabel.copyWith(color: AppColors.bw6),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeviceLink(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        // TODO: подключить устройство
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+        decoration: BoxDecoration(color: Colors.transparent),
+        child: Row(
+          children: [
+            ShaderMask(
+              shaderCallback: (bounds) =>
+                  AppColors.primaryGradient.createShader(bounds),
+              child: AppIcons.svg(
+                'ic_devices',
+                width: 24,
+                height: 24,
+                color: AppColors.bw9999,
+              ),
+            ),
+            const SizedBox(width: 8),
+            ShaderMask(
+              shaderCallback: (bounds) =>
+                  AppColors.primaryGradient.createShader(bounds),
+              child: Text('Подключить устройство', style: AppTextStyles.h4Mob),
+            ),
+          ],
         ),
       ),
     );

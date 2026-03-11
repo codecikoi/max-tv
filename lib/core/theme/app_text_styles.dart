@@ -121,6 +121,14 @@ class AppTextStyles {
     color: AppColors.bw4,
   );
 
+  static final h4Mob = TextStyle(
+    fontFamily: _bounded,
+    fontVariations: const [FontVariation('wght', 566)],
+    fontSize: 14,
+    height: 18 / 14,
+    color: AppColors.bw9999,
+  );
+
   static const captionMob = TextStyle(
     fontFamily: _inter,
     fontWeight: FontWeight.w500,

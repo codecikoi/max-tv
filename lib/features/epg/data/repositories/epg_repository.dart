@@ -1,9 +1,19 @@
+import '../../../../core/models/pagination_meta.dart';
 import '../datasources/epg_remote_datasource.dart';
+import '../models/program_model.dart';
 
 class EpgRepository {
   final EpgRemoteDatasource _remoteDatasource;
 
   EpgRepository(this._remoteDatasource);
+
+  Future<({List<ProgramModel> data, PaginationMeta meta})> getPrograms(
+    int channelId, {
+    int page = 1,
+    String? date,
+  }) {
+    return _remoteDatasource.getPrograms(channelId, page: page, date: date);
+  }
 
   Future<String> getArchiveLink(int programId) {
     return _remoteDatasource.getArchiveLink(programId);

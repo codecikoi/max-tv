@@ -85,9 +85,16 @@ final appRouter = GoRouter(
                 GoRoute(
                   path: 'player/:channelId',
                   parentNavigatorKey: _rootNavigatorKey,
-                  builder: (context, state) => PlayerScreen(
-                    channelId: state.pathParameters['channelId']!,
-                  ),
+                  builder: (context, state) {
+                    final extra = state.extra as Map<String, dynamic>?;
+                    return PlayerScreen(
+                      channelId: state.pathParameters['channelId']!,
+                      streamUrl: extra?['streamUrl'] as String?,
+                      channelName: extra?['channelName'] as String?,
+                      channelLogoUrl: extra?['channelLogoUrl'] as String?,
+                      isFavourite: extra?['isFavourite'] as bool? ?? false,
+                    );
+                  },
                 ),
               ],
             ),
