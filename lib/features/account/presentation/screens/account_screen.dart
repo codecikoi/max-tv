@@ -147,9 +147,7 @@ class _AccountView extends StatelessWidget {
                 AccountMenuTile(
                   icon: 'ic_help',
                   title: 'Помощь',
-                  onTap: () {
-                    // TODO: навигация на помощь
-                  },
+                  onTap: () => context.push('/account/help'),
                 ),
                 const SizedBox(height: 24),
                 _buildDeviceLink(context),

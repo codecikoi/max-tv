@@ -8,9 +8,12 @@ import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_images.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_loader.dart';
+import '../../data/models/tariff_model.dart';
+import '../../data/repositories/tariffs_repository.dart';
 import '../cubit/tariffs_cubit.dart';
 import '../cubit/tariffs_state.dart';
 import '../widgets/tariff_card.dart';
+import 'payment_webview_screen.dart';
 
 class TariffsScreen extends StatelessWidget {
   const TariffsScreen({super.key});
@@ -86,9 +89,7 @@ class _TariffsView extends StatelessWidget {
                               bgGradientColors: isEven
                                   ? _redBgColors
                                   : _purpleBgColors,
-                              onTap: () {
-                                // TODO: подключить тариф
-                              },
+                              onTap: () => _openPayment(context, tariff),
                             ),
                           );
                         }),
@@ -106,6 +107,32 @@ class _TariffsView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _openPayment(BuildContext context, TariffModel tariff) async {
+    try {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: AppLoader()),
+      );
+      final link = await getIt<TariffsRepository>().getPaymentLink(
+        amount: tariff.price,
+      );
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => PaymentWebViewScreen(
+              url: link,
+              tariffName: tariff.title,
+            ),
+          ),
+        );
+      }
+    } catch (_) {
+      if (context.mounted) Navigator.of(context).pop();
+    }
   }
 
   Widget _buildHelpSection() {

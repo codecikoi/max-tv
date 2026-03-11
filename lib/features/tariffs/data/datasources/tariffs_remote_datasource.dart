@@ -14,4 +14,12 @@ class TariffsRemoteDatasource {
         .map((e) => TariffModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
+
+  Future<String> getPaymentLink({required int amount}) async {
+    final response = await _dioClient.dio.get(
+      '/payments/link',
+      queryParameters: {'amount': amount, 'lang': 'ENG'},
+    );
+    return response.data['link'] as String;
+  }
 }

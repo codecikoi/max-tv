@@ -17,6 +17,7 @@ import '../features/player/presentation/screens/player_screen.dart';
 import '../features/account/presentation/screens/account_screen.dart';
 import '../features/account/data/models/user_model.dart';
 import '../features/account/presentation/screens/edit_profile_screen.dart';
+import '../features/account/presentation/screens/help_screen.dart';
 import '../features/account/presentation/screens/settings_screen.dart';
 import '../features/tariffs/presentation/screens/tariffs_screen.dart';
 
@@ -72,6 +73,11 @@ final appRouter = GoRouter(
       path: '/tariffs',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const TariffsScreen(),
+    ),
+    GoRoute(
+      path: '/account/help',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const HelpScreen(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
