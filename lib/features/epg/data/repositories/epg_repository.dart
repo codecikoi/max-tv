@@ -26,6 +26,13 @@ class EpgRepository {
     return _remoteDatasource.getUpcomingPrograms(limit: limit);
   }
 
+  Future<({List<ProgramModel> data, PaginationMeta meta})> searchPrograms({
+    String? search,
+    int page = 1,
+  }) {
+    return _remoteDatasource.searchPrograms(search: search, page: page);
+  }
+
   Future<String> getArchiveLink(int programId) {
     return _remoteDatasource.getArchiveLink(programId);
   }

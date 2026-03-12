@@ -68,6 +68,31 @@ class EpgRemoteDatasource {
         .toList();
   }
 
+  Future<({List<ProgramModel> data, PaginationMeta meta})> searchPrograms({
+    String? search,
+    int page = 1,
+    int perPage = 15,
+  }) async {
+    final response = await _dioClient.dio.get(
+      '/programs',
+      queryParameters: {
+        'current_page': page,
+        'per_page': perPage,
+        if (search != null && search.isNotEmpty) 'search': search,
+      },
+    );
+    final List data = response.data['data'] as List;
+    final meta = PaginationMeta.fromJson(
+      response.data['meta'] as Map<String, dynamic>,
+    );
+    return (
+      data: data
+          .map((json) => ProgramModel.fromJson(json as Map<String, dynamic>))
+          .toList(),
+      meta: meta,
+    );
+  }
+
   Future<String> getArchiveLink(int programId) async {
     final response = await _dioClient.dio.get('/archive', queryParameters: {
       'program': programId,

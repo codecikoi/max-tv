@@ -186,9 +186,7 @@ class _ChannelsViewState extends State<_ChannelsView> {
                     vertical: 8,
                   ),
                   child: GestureDetector(
-                    onTap: () {
-                      // TODO: open search
-                    },
+                    onTap: () => context.push('/channels/search'),
                     child: Container(
                       height: 40,
                       padding: const EdgeInsets.symmetric(horizontal: 20),

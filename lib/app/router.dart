@@ -12,6 +12,7 @@ import '../features/auth/presentation/screens/register_confirm_screen.dart';
 import '../features/auth/presentation/screens/register_complete_screen.dart';
 import '../features/auth/presentation/screens/welcome_screen.dart';
 import '../features/channels/presentation/screens/channels_screen.dart';
+import '../features/channels/presentation/screens/search_screen.dart';
 import '../features/epg/presentation/screens/epg_screen.dart';
 import '../features/player/presentation/screens/player_screen.dart';
 import '../features/account/presentation/screens/account_screen.dart';
@@ -90,6 +91,11 @@ final appRouter = GoRouter(
               path: '/channels',
               builder: (context, state) => const ChannelsScreen(),
               routes: [
+                GoRoute(
+                  path: 'search',
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) => const SearchScreen(),
+                ),
                 GoRoute(
                   path: 'epg/:channelId',
                   builder: (context, state) => EpgScreen(

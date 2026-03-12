@@ -22,6 +22,7 @@ import '../../features/tariffs/data/datasources/tariffs_remote_datasource.dart';
 import '../../features/tariffs/data/repositories/tariffs_repository.dart';
 import '../../features/tariffs/presentation/cubit/tariffs_cubit.dart';
 import '../../features/device_auth/data/datasources/device_auth_remote_datasource.dart';
+import '../../features/channels/presentation/cubit/search_cubit.dart';
 import '../../features/channels/presentation/widgets/category_filter_sheet.dart';
 
 final getIt = GetIt.instance;
@@ -100,6 +101,10 @@ void configureDependencies() {
 
   getIt.registerLazySingleton<DeviceAuthRemoteDatasource>(
     () => DeviceAuthRemoteDatasource(getIt<DioClient>()),
+  );
+
+  getIt.registerFactory<SearchCubit>(
+    () => SearchCubit(getIt<ChannelsRepository>(), getIt<EpgRepository>()),
   );
 
   getIt.registerLazySingleton<CategoryFilterCache>(
