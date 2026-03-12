@@ -147,22 +147,22 @@ class _TariffsView extends StatelessWidget {
           style: AppTextStyles.captionMob.copyWith(color: AppColors.bw6),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 40),
-        GestureDetector(
-          onTap: () {
-            // TODO: открыть чат
-          },
-          child: Container(
-            width: double.infinity,
-            height: 44,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AppColors.surfaceLight,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text('Написать в чат', style: AppTextStyles.fieldLabel),
-          ),
-        ),
+        // const SizedBox(height: 40),
+        // GestureDetector(
+        //   onTap: () {
+        //     // TODO: открыть чат
+        //   },
+        //   child: Container(
+        //     width: double.infinity,
+        //     height: 44,
+        //     alignment: Alignment.center,
+        //     decoration: BoxDecoration(
+        //       color: AppColors.surfaceLight,
+        //       borderRadius: BorderRadius.circular(8),
+        //     ),
+        //     child: Text('Написать в чат', style: AppTextStyles.fieldLabel),
+        //   ),
+        // ),
       ],
     );
   }

@@ -477,24 +477,24 @@ class _TariffExpiredScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                height: 40,
-                child: GestureDetector(
-                  onTap: () {
-                    // TODO: открыть чат
-                  },
-                  child: Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceLight,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text('Открыть чат', style: AppTextStyles.fieldLabel),
-                  ),
-                ),
-              ),
+              // const SizedBox(height: 12),
+              // SizedBox(
+              //   width: double.infinity,
+              //   height: 40,
+              //   child: GestureDetector(
+              //     onTap: () {
+              //       // TODO: открыть чат
+              //     },
+              //     child: Container(
+              //       alignment: Alignment.center,
+              //       decoration: BoxDecoration(
+              //         color: AppColors.surfaceLight,
+              //         borderRadius: BorderRadius.circular(8),
+              //       ),
+              //       child: Text('Открыть чат', style: AppTextStyles.fieldLabel),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 16),
             ],
           ),
