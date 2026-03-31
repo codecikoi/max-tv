@@ -25,7 +25,7 @@ class AppColors {
   static const gradientStart = Color(0xFFFE5C96);
   static const gradientEnd = Color(0xFFFB5D48);
   static const hovered = Color(0xFFFD5D6B);
-
+  static const pink = Color(0xffff737f);
   static const primaryGradient = LinearGradient(
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,

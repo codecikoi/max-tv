@@ -13,6 +13,8 @@ class AppTextField extends StatelessWidget {
   final bool enabled;
   final TextInputType? keyboardType;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
+  final TextInputAction? textInputAction;
 
   const AppTextField({
     super.key,
@@ -24,6 +26,8 @@ class AppTextField extends StatelessWidget {
     this.enabled = true,
     this.keyboardType,
     this.onChanged,
+    this.onSubmitted,
+    this.textInputAction,
   });
 
   @override
@@ -53,6 +57,8 @@ class AppTextField extends StatelessWidget {
             enabled: enabled,
             keyboardType: keyboardType,
             onChanged: onChanged,
+            onSubmitted: onSubmitted,
+            textInputAction: textInputAction,
             autocorrect: false,
             enableSuggestions: false,
             style: enabled

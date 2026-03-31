@@ -24,6 +24,9 @@ import '../../features/tariffs/presentation/cubit/tariffs_cubit.dart';
 import '../../features/device_auth/data/datasources/device_auth_remote_datasource.dart';
 import '../../features/channels/presentation/cubit/search_cubit.dart';
 import '../../features/channels/presentation/widgets/category_filter_sheet.dart';
+import '../../features/playlist/data/datasources/playlist_remote_datasource.dart';
+import '../../features/playlist/data/repositories/playlist_repository.dart';
+import '../../features/playlist/presentation/cubit/playlist_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -109,5 +112,15 @@ void configureDependencies() {
 
   getIt.registerLazySingleton<CategoryFilterCache>(
     () => CategoryFilterCache(),
+  );
+
+  getIt.registerLazySingleton<PlaylistRemoteDatasource>(
+    () => PlaylistRemoteDatasource(getIt<DioClient>()),
+  );
+  getIt.registerLazySingleton<PlaylistRepository>(
+    () => PlaylistRepository(getIt<PlaylistRemoteDatasource>()),
+  );
+  getIt.registerFactory<PlaylistCubit>(
+    () => PlaylistCubit(getIt<PlaylistRepository>()),
   );
 }

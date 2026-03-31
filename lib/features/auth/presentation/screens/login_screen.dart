@@ -9,6 +9,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_loader.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../../playlist/presentation/screens/add_playlist_screen.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -36,9 +37,11 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocProvider.value(
       value: _cubit,
       child: BlocListener<AuthCubit, AuthState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state is AuthAuthenticated) {
-            context.go('/channels');
+            final shown = await isPlaylistScreenShown();
+            if (!context.mounted) return;
+            context.go(shown ? '/channels' : '/add-playlist');
           }
         },
         child: Scaffold(

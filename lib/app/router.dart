@@ -20,6 +20,7 @@ import '../features/account/data/models/user_model.dart';
 import '../features/account/presentation/screens/edit_profile_screen.dart';
 import '../features/account/presentation/screens/help_screen.dart';
 import '../features/account/presentation/screens/settings_screen.dart';
+import '../features/playlist/presentation/screens/add_playlist_screen.dart';
 import '../features/tariffs/presentation/screens/tariffs_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -55,6 +56,10 @@ final appRouter = GoRouter(
       builder: (context, state) => RegisterCompleteScreen(
         email: state.extra as String,
       ),
+    ),
+    GoRoute(
+      path: '/add-playlist',
+      builder: (context, state) => const AddPlaylistScreen(),
     ),
     GoRoute(
       path: '/account/edit',
