@@ -8,7 +8,7 @@ class MaxTVApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'MAX TV',
+      title: 'РАДУГА ТВ',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
       routerConfig: appRouter,

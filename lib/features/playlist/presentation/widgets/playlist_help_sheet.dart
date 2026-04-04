@@ -55,7 +55,7 @@ class _PlaylistHelpContent extends StatelessWidget {
           _buildStepRich([
             const TextSpan(text: 'В '),
             TextSpan(
-              text: 'веб-версии MaxTV',
+              text: 'веб-версии РАДУГА ТВ',
               style: AppTextStyles.captionMob.copyWith(
                 color: const Color(0xFFFF737F),
               ),
