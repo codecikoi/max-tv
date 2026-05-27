@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 import '../core/di/injection.dart';
+import '../core/network/token_storage.dart';
 import '../core/widgets/app_tab_bar.dart';
 import '../core/theme/app_colors.dart';
 import '../features/auth/presentation/screens/forgot_password_screen.dart';
@@ -25,9 +26,21 @@ import '../features/tariffs/presentation/screens/tariffs_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
+const _publicPaths = ['/welcome', '/login', '/forgot-password', '/register'];
+
 final appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/welcome',
+  redirect: (context, state) async {
+    final tokenStorage = getIt<TokenStorage>();
+    final hasToken = await tokenStorage.hasToken();
+    final location = state.matchedLocation;
+    final isPublic = _publicPaths.any((p) => location.startsWith(p));
+
+    if (hasToken && isPublic) return '/channels';
+    if (!hasToken && !isPublic) return '/welcome';
+    return null;
+  },
   routes: [
     GoRoute(
       path: '/welcome',
